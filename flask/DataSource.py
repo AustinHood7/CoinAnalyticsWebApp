@@ -8,7 +8,7 @@ class DataSource:
     def __init__(self):
         self.url = " "
         self.headers = {
-            "X-RapidAPI-Key": "611f5013famsh1fc2f5d32f20cf8p1a2138jsn53b7569f471e",
+            "X-RapidAPI-Key": "ENTER API KEY HERE",
             "X-RapidAPI-Host": "coinranking1.p.rapidapi.com"
         }
         self.querystring = {}
