@@ -28,5 +28,24 @@ def hello_world():
     price_history = data_source.get_data_for_coin(uuid)["data"]["history"]
     return render_template("hello_world.html", jsonobj=price_history)
 
+@app.route('/calendar')
+def calender_coin():
+    calender_source = DataSource()
+    user_query = "Ether"
+
+    return_json = calender_source.search_for_coin(user_query)["data"]["coins"]
+
+    # if no coins were found
+    if not return_json:
+        # tell the user that no results were found
+        return "No results found"
+
+    uuid = return_json[0]["uuid"]
+
+    calender_source.timeline_to_1y()
+    price_history = calender_source.get_data_for_coin(uuid)["data"]["history"]
+
+    return render_template("calender.html", jsonobj=price_history)
+
 if __name__ == '__main__':
     app.run()
