@@ -8,10 +8,10 @@ class DataSource:
     def __init__(self):
         self.url = " "
         self.headers = {
-            "X-RapidAPI-Key": "ENTER API KEY HERE",
+            "X-RapidAPI-Key": "611f5013famsh1fc2f5d32f20cf8p1a2138jsn53b7569f471e",
             "X-RapidAPI-Host": "coinranking1.p.rapidapi.com"
         }
-        self.querystring = {}
+        self.querystring = {"referenceCurrencyUuid": "yhjMzLPhuIDl"}
 
     def get_data_for_top_coins(self):
         """
@@ -20,7 +20,7 @@ class DataSource:
         """
         self.url = "https://coinranking1.p.rapidapi.com/coins"
         self.querystring = {
-            "referenceCurrencyUuid": "yhjMzLPhuIDl", "timePeriod": "24h",
+            "timePeriod": "24h",
             "tiers[0]": "1", "orderBy": "marketCap", "orderDirection": "desc",
             "limit": "50", "offset": "0"
         }
@@ -37,10 +37,6 @@ class DataSource:
         """
         self.url = f"https://coinranking1.p.rapidapi.com/coin/{uuid}/history"
 
-        # we can set other parameters later
-        self.querystring = {
-            "referenceCurrencyUuid": "yhjMzLPhuIDl", "timePeriod": "24h"
-        }
         response = requests.request("GET", self.url, headers=self.headers,
                                     params=self.querystring)
         return response.json()
@@ -52,8 +48,12 @@ class DataSource:
         """
         query = query.replace(' ', '+')
         self.url = f"https://api.coinranking.com/v2/search-suggestions?query={query} "
-        self.querystring = {"referenceCurrencyUuid": "yhjMzLPhuIDl"}
 
         response = requests.request("GET", self.url, headers=self.headers,
                                     params=self.querystring)
         return response.json()
+
+
+    def timeline_to_1y(self):
+        self.querystring["timePeriod"] = "1y"
+        return
