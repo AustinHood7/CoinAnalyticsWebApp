@@ -1,0 +1,40 @@
+<html>
+<head>
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script type="text/javascript">
+        google.charts.load("current", {packages:["calendar"]});
+        google.charts.setOnLoadCallback(drawChart);
+
+        function unixTimeToLocal(unixTimestamp) {
+            return new Date(unixTimestamp * 1000);
+        }
+
+        function drawChart() {
+            // Shows if it increased or decreased from the previous day
+            var dataTable = new google.visualization.DataTable();
+            dataTable.addColumn({ type: 'date', id: 'Date' });
+            dataTable.addColumn({ type: 'number', id: 'Increase/Decrease' });
+
+            // For each day, get the change from the previous day
+            dataTable.addRows([
+                {% for i in range((jsonobj | length) - 1) %}
+                    [unixTimeToLocal({{ jsonobj[i]["timestamp"] }}),
+                        {{ (jsonobj[i]["price"] | int) }} - {{ (jsonobj[i+1]["price"]  | int) }}],
+                {% endfor %}
+            ]);
+
+            var chart = new google.visualization.Calendar(document.getElementById('calendar_basic'));
+
+            var options = {
+                title: "Price of Coin Differential",
+                height: 350,
+            };
+
+            chart.draw(dataTable, options);
+        }
+    </script>
+</head>
+<body>
+<div id="calendar_basic" style="width: 1000px; height: 350px;"></div>
+</body>
+</html>
