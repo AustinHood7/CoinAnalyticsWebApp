@@ -1,21 +1,29 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <!-- Do not change the two script tags and first two google.charts methods -->
+    <!-- Do not change the two script tags and first google.charts methods -->
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
     <script type="text/javascript">
         google.charts.load('current', {'packages':['corechart']});
         google.charts.setOnLoadCallback(drawChart);
+
+        function unixTimeToLocal(unixTimestamp) {
+            // date object can be created with milliseconds
+            // epoch time is unix time which is number of seconds 01/01/1970
+            return new Date(unixTimestamp * 1000);
+        }
 
         function drawChart() {
             // Create a matrix and iterate through json to add to matrix
             // See jinja to explain percents and curly brackets
             var data = google.visualization.arrayToDataTable([
                 ['Time', 'Price'],
-                {% for row in jsonobj  %}
-                    [{{ row["timestamp"] }}, {{ row["price"] }}],
+                {% for row in jsonobj %}
+                    [unixTimeToLocal({{ row["timestamp"] }}), {{ row["price"] }}],
                 {% endfor %}
             ]);
+
+
 
             // State options such as title, axes labels, tick marks, etc
             var options = {
@@ -28,13 +36,44 @@
                 }
             };
 
-            var chart = new google.visualization.LineChart(document.getElementById('curve_chart'));
-            chart.draw(data, options);
+            var curve_options = {
+                title: 'Price of Coin vs Time',
+                hAxis: {
+                    title: 'Time'
+                },
+                vAxis: {
+                    title: 'Price of coin (USD)',
+                },
+                trendlines: {
+                    0: {
+                        visibleInLegend: true,
+                    }
+                }
+            };
+
+            var line_chart = new google.visualization.LineChart(document.getElementById('line_div'));
+            line_chart.draw(data, options);
+
+            var line_with_tl = new google.visualization.LineChart(document.getElementById('line_with_tl_div'));
+            line_with_tl.draw(data, curve_options);
+
+            var area_chart = new google.visualization.AreaChart(document.getElementById('area_div'));
+            area_chart.draw(data, options);
+
+            var area_chart = new google.visualization.ColumnChart(document.getElementById('column_div'));
+            area_chart.draw(data, options);
+
+            var scatter_chart = new google.visualization.ScatterChart(document.getElementById('scatter_div'));
+            scatter_chart.draw(data, options);
         }
     </script>
 </head>
 <body>
-<div id="curve_chart" style="width: 900px; height: 500px"></div>
+<div id="line_div" style="width: 1100px; height: 500px"></div>
+<div id="line_with_tl_div" style="width: 1100px; height: 500px"></div>
+<div id='area_div' style='width: 1100px; height: 600px;'></div>
+<div id='column_div' style='width: 1100px; height: 600px;'></div>
+<div id='scatter_div' style='width: 1100px; height: 600px;'></div>
 </body>
 </html>
 
